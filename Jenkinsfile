@@ -10,7 +10,7 @@ node () {
  	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITLAB', url: 'https://github.com/juananmora/jpetstore']]]) 
 	}
 	stage ('Build Artifact') {
-	    bat "mvn package " 
+	    bat "mvn -o clean package " 
 	   
 	}
 	stage ('Deploy Version DES') {
