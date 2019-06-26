@@ -9,7 +9,7 @@ node () {
 	stage ('Checkout GitHub Jon') {
  	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITLAB', url: 'https://github.com/juananmora/jpetstore']]]) 
 	}
-	stage ('Build Artifact') {
+	stage ('Build Artifacts') {
 	    bat "mvn clean package " 
 	   
 	}
