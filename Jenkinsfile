@@ -47,19 +47,7 @@ node () {
 	        bat "docker restart tomcatqat" 
     }
 	
-	stage 'Deploy Version PRO'
-		input 'Do you approve deployment in PRO?'
-		node {
-		    
-			bat "docker exec tomcatprd rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
-		}
-	
-	stage ('Deploy PRO') {
-	        bat "docker cp -a target\\jpetstore.war tomcatprd:/usr/local/tomcat/webapps/" 
-    }
-    stage ('Reiniciando contenedor tomcatprd') {
-	        bat "docker restart tomcatprd" 
-    }
+
 	stage ('Enviando Notificación al equipo') {
 		slackSend channel: '#builds',
 					  color: 'good',
