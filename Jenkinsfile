@@ -60,11 +60,7 @@ node () {
     stage ('Reiniciando contenedor tomcatprd') {
 	        bat "docker restart tomcatprd" 
     }
-	stage ('Enviando Notificación al equipo') {
-		slackSend channel: '#builds',
-					  color: 'good',
-					  message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
-	}
+	
 }
 
 }
