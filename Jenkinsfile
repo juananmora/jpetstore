@@ -2,7 +2,7 @@
 
 
 
-node () {
+node ('maven') {
 	
 	//env.JMETER_HOME='D:/Users/jamora/Programas/apache-jmeter-4.0/apache-jmeter-4.0'
 
@@ -10,9 +10,9 @@ node () {
  	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITLAB', url: 'https://github.com/juananmora/jpetstore.git']]]) 
 	}
 	stage ('Build Artifact') {
-	  node('maven'){
+	
 	  	  sh "mvn package " 
-	  }
+	  
 	}
 	stage ('Deploy Version DES') {
 
