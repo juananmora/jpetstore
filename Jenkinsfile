@@ -11,7 +11,7 @@ node ('maven') {
 	}
 	stage ('Build Artifact') {
 	    sh "mvn package " 
-	    sleep("400000")
+	    //sleep("400000")
 	   
 	}
 	
