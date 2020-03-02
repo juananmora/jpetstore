@@ -14,11 +14,7 @@ node ('maven') {
 	   
 	}
 	
-	stage ('Enviando Notificación al equipo') {
-		slackSend channel: '#builds',
-					  color: 'good',
-					  message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
-	}
+	
 }
 
 
