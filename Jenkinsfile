@@ -35,7 +35,8 @@ node ('maven') {
 	    echo "Test Rendimiento"
 	}	
 	stage ('Despliegue Blue Green PRO') {
-	    echo "Deploy BG PRO"
+	    input 'Do you approve deployment in PRO?'
+		echo "Deploy BG PRO"
 	}
 	
 }
