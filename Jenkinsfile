@@ -23,7 +23,7 @@ node ('maven') {
 	   echo "Kaniko"
 	}
 	stage ('Deploy Dev') {
-	   echo "Deploy Dev
+	   echo "Deploy Dev"
 	}
 	stage ('Deploy PRE') {
 	   echo "Deploy Pre"
