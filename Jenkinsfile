@@ -30,6 +30,7 @@ node ('maven') {
 	}	
 	stage ('Test Funcionales') {
 	    echo "Test Funcionales"
+	    sh "wget http://selenium-hub-project-jon.apps.us-east-2.starter.openshift-online.com/"
 	}
 	stage ('Test Rendimiento') {
 	    echo "Test Rendimiento"
