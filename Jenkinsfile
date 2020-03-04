@@ -13,31 +13,31 @@ node ('maven') {
 	    sh "mvn package " 
 	}
 	stage ('Calidad de Codigo - SonarQube') {
-	   echo "Sonar"
+	   echo "Pasamos Calidad de Código con Sonar"
 	   sleep("5") 
 	}	
 	stage ('Subida binario a Nexus') {
-	   echo "Nexus"
+	   echo "Subimos el binario generado a Nexus"
 	   sleep("5") 
 	}
 	stage ('Creación Imagen Docker y Registro Imagen en Harbor') {
-	   echo "Kaniko"
+	   echo "Creamos imagen inmutable con Kaniko"
 	   sleep("5") 
 	}
 	stage ('Deploy Dev') {
-	   echo "Deploy Dev"
+	   echo "Deploy en el entorno de Dev"
            sleep("5") 
 	}
 	stage ('Deploy PRE') {
-	   echo "Deploy Pre"
+	   echo "Deploy en el entorno de Pre"
 	   sleep("5") 
 	}	
 	stage ('Test Funcionales') {
-	    echo "Test Funcionales"
+	    echo "Ejecución de Test Funcionales con Cilantrum"
 	    sh "wget http://selenium-hub-project-jon.apps.us-east-2.starter.openshift-online.com/"
 	}
 	stage ('Test Rendimiento') {
-	    echo "Test Rendimiento"
+	    echo "Ejecución de Test Rendimiento con Jmeter"
 	    sleep("5") 
 	}	
 	stage ('Despliegue Blue Green PRO') {
