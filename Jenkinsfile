@@ -11,27 +11,26 @@ node ('maven') {
 	}
 	stage ('Build Artifact Maven') {
 	    sh "mvn package " 
-	    sleep("5000") 
 	}
 	stage ('Calidad de Codigo - SonarQube') {
 	   echo "Sonar"
-	   sleep("5000") 
+	   sleep("5") 
 	}	
 	stage ('Subida binario a Nexus') {
 	   echo "Nexus"
-	   sleep("5000") 
+	   sleep("5") 
 	}
 	stage ('Creación Imagen Docker y Registro Imagen en Harbor') {
 	   echo "Kaniko"
-	   sleep("5000") 
+	   sleep("5") 
 	}
 	stage ('Deploy Dev') {
 	   echo "Deploy Dev"
-           sleep("5000") 
+           sleep("5") 
 	}
 	stage ('Deploy PRE') {
 	   echo "Deploy Pre"
-	   sleep("5000") 
+	   sleep("5") 
 	}	
 	stage ('Test Funcionales') {
 	    echo "Test Funcionales"
@@ -39,7 +38,7 @@ node ('maven') {
 	}
 	stage ('Test Rendimiento') {
 	    echo "Test Rendimiento"
-	    sleep("5000") 
+	    sleep("5") 
 	}	
 	stage ('Despliegue Blue Green PRO') {
 	    input 'Do you approve deployment in PRO?'
