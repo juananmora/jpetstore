@@ -30,7 +30,7 @@ RUN apk del curl && \
 EXPOSE 8080
 
 
-ADD ./target/jpetstore.war /opt/apache-tomcat-$TOMCAT_VERSION/webapps/
+ADD ./target/jpetstore.war $CATALINA_HOME/webapps/
 
 ENTRYPOINT $CATALINA_HOME/bin/catalina.sh run
 
