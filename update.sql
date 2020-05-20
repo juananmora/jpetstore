@@ -1,2 +1,2 @@
-update category set name="PAJARRACOS" where name="Birds";
+update category set name="Birdies" where name="PAJARRACOS";
 commit;
