@@ -248,8 +248,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <sonar.host.url>http://10.29.2.200:9000</sonar.host.url>
-	<sonar.login>604565149072bd9cd235b1673d89a85ee0aeed7a</sonar.login>
+        <sonar.host.url>http://192.168.1.47:9010</sonar.host.url>
+	<sonar.login>4ba50a5ab4548fdd361e8b71c7907fb62beded40</sonar.login>
         <sonar.projectName>jpetstore</sonar.projectName>
         <sonar.projectVersion>master</sonar.projectVersion>
         
