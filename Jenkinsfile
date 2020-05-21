@@ -40,6 +40,10 @@ node('java-docker-slave') {
 				sh "docker image rm juananmora/tomcattest:'$BUILD_NUMBER'"
 				//sh """docker rmi "\$(docker images -f 'dangling=true' -q)\""""
 			 }
+			stage ('Deploy Test Environment'){
+				sh "docker create -it --add-host jpetstore-db.bmc.aws.local:172.23.0.3 --network netcompose --name tomcatdemo -p 8075:8080 juananmora/tomcattest:'$BUILD_NUMBER' catalina.sh run"
+				sh "docker start tomcatdemo"
+			 }
 		}
     }
 }
