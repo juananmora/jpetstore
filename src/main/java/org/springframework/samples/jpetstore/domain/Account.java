@@ -26,6 +26,7 @@ public class Account implements Serializable {
   private boolean bannerOption;
   private String bannerName;
 
+
   /* JavaBeans Properties */
 
   public String getUsername() { return username; }
