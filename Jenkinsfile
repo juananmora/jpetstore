@@ -1,7 +1,7 @@
 node('java-docker-slave') {
     stage ('CheckOut GitHub') {
         
-     	 checkout([$class: 'GitSCM', branches: [[name: '*/testjenkins']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '', url: 'https://github.com/juananmora/jpetstore.git']]]) 
+     	 checkout([$class: 'GitSCM', branches: [[name: '*/testjenkins']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'githubjon', url: 'https://github.com/juananmora/jpetstore.git']]]) 
 	}
     stage ('Build') {
          sh "mvn package" 
