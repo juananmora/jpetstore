@@ -16,7 +16,7 @@ node('java-docker-slave') {
 	}
 	stage("Quality Gate"){
 	    //timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-		sleep(10)
+		sleep(20)
 		def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
 		if (qg.status != 'OK') {
 		  error "Pipeline aborted due to quality gate failure: ${qg.status}"
