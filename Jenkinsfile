@@ -33,7 +33,23 @@ node('java-docker-slave') {
 				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
 
 			 }
-        stage ('CheckOut GitHub') {
+
+ 		stage ('Build Image'){
+        				sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."
+        				sh "docker login -u juananmora -p gloyjonas"
+        				sh "docker push juananmora/tomcattest:'$BUILD_NUMBER'"
+        				sh "docker image rm juananmora/tomcattest:'$BUILD_NUMBER'"
+        				//sh """docker rmi "\$(docker images -f 'dangling=true' -q)\""""
+   		 }
+       	stage ('Deploy Test Environment'){
+        				//sh "docker stop tomcatdemo"
+        				//sh "docker rm tomcatdemo"
+        				sh "docker rm -f tomcatdemo > /dev/null 2>&1 && echo 'removed container' || echo 'nothing to remove'"
+        				sh "docker create -it --add-host jpetstore-db.bmc.aws.local:172.23.0.3 --network netcompose --name tomcatdemo -p 8075:8080 juananmora/tomcattest:'$BUILD_NUMBER' catalina.sh run"
+        				sh "docker start tomcatdemo"
+         }
+
+        stage ('CheckOut GitHub Test') {
 
                  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-testing.git']]])
             }
@@ -55,20 +71,7 @@ node('java-docker-slave') {
             }
 
 
-			stage ('Build Image'){
-				sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."
-				sh "docker login -u juananmora -p gloyjonas"
-				sh "docker push juananmora/tomcattest:'$BUILD_NUMBER'"
-				sh "docker image rm juananmora/tomcattest:'$BUILD_NUMBER'"
-				//sh """docker rmi "\$(docker images -f 'dangling=true' -q)\""""
-			 }
-			stage ('Deploy Test Environment'){
-				//sh "docker stop tomcatdemo"
-				//sh "docker rm tomcatdemo"
-				sh "docker rm -f tomcatdemo > /dev/null 2>&1 && echo 'removed container' || echo 'nothing to remove'"
-				sh "docker create -it --add-host jpetstore-db.bmc.aws.local:172.23.0.3 --network netcompose --name tomcatdemo -p 8075:8080 juananmora/tomcattest:'$BUILD_NUMBER' catalina.sh run"
-				sh "docker start tomcatdemo"
-			 }
+
 		}
     }
 }
