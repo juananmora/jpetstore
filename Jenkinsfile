@@ -41,7 +41,7 @@ node('java-docker-slave') {
                  sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/cilamtrum/jpetstore/1.0/jpetstore-1.0.jar"
             }
             stage ('Testing Automation') {
-              sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' 'resources/buildDEV.properties'"
+              sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'"
             }
             stage('TestNG') {
                 step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
