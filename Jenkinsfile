@@ -33,6 +33,28 @@ node('java-docker-slave') {
 				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
 
 			 }
+        stage ('CheckOut GitHub') {
+
+                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-testing.git']]])
+            }
+            stage ('Download Cilantrum Jar') {
+                 sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/cilamtrum/jpetstore/1.0/jpetstore-1.0.jar"
+            }
+            stage ('Testing Automation') {
+              sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' 'resources/buildDEV.properties'"
+            }
+            stage('TestNG') {
+                step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
+                                                                                                      thresholdMode: 2,
+                                                                                                      failedSkips: 100,
+                                                                                                      failedFails: 90,
+                                                                                                      unstableFails: 90,
+                                showFailedBuilds: true
+                            ])
+
+            }
+
+
 			stage ('Build Image'){
 				sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."
 				sh "docker login -u juananmora -p gloyjonas"

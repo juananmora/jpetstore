@@ -8,7 +8,7 @@
 </td></tr>
 </table>
 </td><td valign="top" align="center">
-<h2 align="center">Shopping Car</h2>
+<h2 align="center">Shopping Cart</h2>
 <form action="<c:url value="/shop/updateCartQuantities.do"/>" method="post">
 <table align="center" bgcolor="#008800" border="0" cellspacing="2" cellpadding="5">
   <tr bgcolor="#cccccc">
