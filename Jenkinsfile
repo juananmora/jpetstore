@@ -7,7 +7,7 @@ node('java-docker-slave') {
          sh "mvn package" 
     }
 	stage ('Upload Artifact') {
-	   nexusPublisher nexusInstanceId: 'nexus3', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.release', packaging: 'war', version: 'release']]]
+	   nexusPublisher nexusInstanceId: 'nexus3', nexusRepositoryId: 'maven-snapshots', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.release', packaging: 'war', version: 'SNAPSHOT']]]
 	}
 	stage('SonarQube analysis') {
 		withSonarQubeEnv('sonar') {
