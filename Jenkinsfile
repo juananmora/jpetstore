@@ -7,7 +7,7 @@ node('java-docker-slave') {
          sh "mvn package" 
     }
 	stage ('Upload Artifact') {
-	   nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.prueba', packaging: 'war', version: '$BUILD_NUMBER']]]
+	   nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'snapshots', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.prueba', packaging: 'war', version: '$BUILD_NUMBER']]]
 	}
 	stage('SonarQube analysis') {
 		withSonarQubeEnv('sonar') {
@@ -33,20 +33,7 @@ node('java-docker-slave') {
 				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
 
 			 }
-			stage ('Build Image'){
-				sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."
-				sh "docker login -u juananmora -p gloyjonas"
-				sh "docker push juananmora/tomcattest:'$BUILD_NUMBER'"
-				sh "docker image rm juananmora/tomcattest:'$BUILD_NUMBER'"
-				//sh """docker rmi "\$(docker images -f 'dangling=true' -q)\""""
-			 }
-			stage ('Deploy Test Environment'){
-				//sh "docker stop tomcatdemo"
-				//sh "docker rm tomcatdemo"
-				sh "docker rm -f tomcatdemo > /dev/null 2>&1 && echo 'removed container' || echo 'nothing to remove'"
-				sh "docker create -it --add-host jpetstore-db.bmc.aws.local:172.23.0.3 --network netcompose --name tomcatdemo -p 8075:8080 juananmora/tomcattest:'$BUILD_NUMBER' catalina.sh run"
-				sh "docker start tomcatdemo"
-			 }
+
 		}
     }
 }
