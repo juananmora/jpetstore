@@ -14,14 +14,11 @@ node('java-docker-slave') {
 		  sh 'mvn sonar:sonar'
 		} // submitted SonarQube taskId is automatically attached to the pipeline context
 	}
-	stage("Quality Gate"){
-	    //timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-		sleep(20)
-		def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-		if (qg.status != 'OK') {
-		  error "Pipeline aborted due to quality gate failure: ${qg.status}"
-		}
-    }
+
+    
+}
+
+node('java-docker-slave') {
     docker.withTool("docker") { 
 		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
 			stage ('Deploy') {
@@ -40,36 +37,11 @@ node('java-docker-slave') {
             stage ('Download Cilantrum Jar') {
                  sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/cilamtrum/jpetstore/1.0/jpetstore-1.0.jar"
             }
-            stage ('Testing Automation') {
-              sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'"
-            }
-            stage('TestNG') {
-                step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
-                                                                                                      thresholdMode: 2,
-                                                                                                      failedSkips: 100,
-                                                                                                      failedFails: 90,
-                                                                                                      unstableFails: 90,
-                                showFailedBuilds: true
-                            ])
-
-            }
+            
 
 
-			stage ('Build Image'){
-				sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."
-				sh "docker login -u juananmora -p gloyjonas"
-				sh "docker push juananmora/tomcattest:'$BUILD_NUMBER'"
-				sh "docker image rm juananmora/tomcattest:'$BUILD_NUMBER'"
-				//sh """docker rmi "\$(docker images -f 'dangling=true' -q)\""""
-			 }
-			stage ('Deploy Test Environment'){
-				//sh "docker stop tomcatdemo"
-				//sh "docker rm tomcatdemo"
-				sh "docker rm -f tomcatdemo > /dev/null 2>&1 && echo 'removed container' || echo 'nothing to remove'"
-				sh "docker create -it --add-host jpetstore-db.bmc.aws.local:172.23.0.3 --network netcompose --name tomcatdemo -p 8075:8080 juananmora/tomcattest:'$BUILD_NUMBER' catalina.sh run"
-				sh "docker start tomcatdemo"
-			 }
-		}
+		
+	}
     }
 }
 
