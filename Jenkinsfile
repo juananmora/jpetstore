@@ -9,11 +9,11 @@ node('java-docker-slave') {
 	stage ('Upload Artifact') {
 	   nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.testjenkins', packaging: 'war', version: '$BUILD_NUMBER'-'$JOB_NAME']]]
 	}
-	stage('SonarQube analysis') {
-		withSonarQubeEnv('sonar') {
-		  sh 'mvn sonar:sonar'
-		} // submitted SonarQube taskId is automatically attached to the pipeline context
-	}
+	//stage('SonarQube analysis') {
+	//	withSonarQubeEnv('sonar') {
+	//	  sh 'mvn sonar:sonar'
+	//	} 
+	//}
 
     
 }
@@ -22,7 +22,8 @@ node('java-docker-slave') {
     docker.withTool("docker") { 
 		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
 			stage ('Deploy') {
-				 sh "docker cp ./target/jpetstore.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
+				 sh "wget http://localhost:8081/nexus/service/local/repositories/releases/content/org/jenkins-ci/testjenkins/jpetstore/16/jpetstore-16.war"
+				 sh "docker cp jpetstore-16.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
 				 sh "docker restart tomcatcompose"
 			}
 			stage ('Updates BBDD'){
