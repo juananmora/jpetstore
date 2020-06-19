@@ -22,8 +22,8 @@ node('java-docker-slave') {
     docker.withTool("docker") { 
 		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
 			stage ('Deploy') {
-				 sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/org/jenkins-ci/testjenkins/jpetstore/2/jpetstore-2.war"
-				 sh "docker cp jpetstore-2.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
+				 sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/org/jenkins-ci/testjenkins/jpetstore/$BUILD_NUMBER/jpetstore-$BUILD_NUMBER.war"
+				 sh "docker cp jpetstore-$BUILD_NUMBER.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
 				 sh "docker restart tomcatcompose"
 			}
 			//stage ('Updates BBDD'){
