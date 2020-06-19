@@ -26,11 +26,11 @@ node('java-docker-slave') {
 				 sh "docker cp jpetstore-2.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
 				 sh "docker restart tomcatcompose"
 			}
-			stage ('Updates BBDD'){
-				 sh "docker cp update.sql mysqlcompose:/"
-				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
+			//stage ('Updates BBDD'){
+			//	 sh "docker cp update.sql mysqlcompose:/"
+			//	 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
 
-			 }
+			 //}
         stage ('CheckOut GitHub Test') {
 
                  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-testing.git']]])
