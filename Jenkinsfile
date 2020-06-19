@@ -23,7 +23,7 @@ node('java-docker-slave') {
 		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
 			stage ('Deploy') {
 				 sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/org/jenkins-ci/testjenkins/jpetstore/'$BUILD_NUMBER'/jpetstore-'$BUILD_NUMBER'.war"
-				 sh "mv jpetstore-'$BUILD_NUMBER'.war jpetstore.war
+				 sh "mv jpetstore-'$BUILD_NUMBER'.war jpetstore.war"
 				 sh "docker cp jpetstore.war tomcatcompose:/opt/apache-tomcat-8.5.37/webapps/"
 				 sh "docker restart tomcatcompose"
 			}
