@@ -25,7 +25,7 @@ node('java-docker-slave') {
     docker.withTool("docker") { 
 		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
 			stage ('Deploy') {
-				 sh "docker cp ./target/jpetstore.war tomcatcomposedos:/opt/apache-tomcat-8.5.37/webapps/"
+				 sh "docker cp ./target/jpetstore.war tomcatcomposedos:/usr/local/tomcat/webapps/"
 				 sh "docker restart tomcatcomposedos"
 			}
 			stage ('Updates BBDD'){
