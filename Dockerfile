@@ -1,4 +1,4 @@
-FROM tomcat:8.5
+FROM juananmora/tomcatdes:70
 
 LABEL maintainer="jamora@minsait.com"
 
