@@ -14,7 +14,7 @@ node ('maven') {
 	  	  sh "mvn package " 
 	  
 	}
-	stage ('Deploy Version DES') {
+	stage ('Scan Sonar') {
 
 		//sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."	
 		//bat "docker exec tomcatdes rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
@@ -24,7 +24,7 @@ node ('maven') {
 	        //sh "docker cp -a target\\jpetstore.war tomcatdes:/usr/local/tomcat/webapps/" 
 			
     }
-	stage ('Push tomcat to Registry') {
+	stage ('Push image to Registry') {
 
 		//	bat "docker commit tomcatdes imagetomcatdes:${BUILD_NUMBER}"
 		//    bat "docker login -u juananmora -p gloyjonas"
