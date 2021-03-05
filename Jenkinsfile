@@ -15,9 +15,9 @@ node ('maven') {
 	  
 	}
 	stage ('Scan Sonar') {
-		 docker.withTool("docker") { 
-			sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."	
-		 }
+		
+		//sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."	
+		
 		//bat "docker exec tomcatdes rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
 		}
 	
