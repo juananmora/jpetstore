@@ -16,7 +16,8 @@ node ('maven') {
 	}
 	stage ('Deploy Version DES') {
 
-			//bat "docker exec tomcatdes rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
+		sh "docker build -t juananmora/tomcattest:'$BUILD_NUMBER' ."	
+		//bat "docker exec tomcatdes rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
 		}
 	
 	stage ('Deploy DEV') {
