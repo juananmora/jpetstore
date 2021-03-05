@@ -1,0 +1,23 @@
+------ CREATE ----------
+
+.\oc new-app -f templates-selenium/selenium-hub.yaml -n juananmoraalonso-stage -p seleniumhub="selenium-hub-jon"
+
+.\oc new-app -f templates-selenium/selenium-node-chrome.yaml -n juananmoraalonso-stage -p seleniumhub="selenium-hub-jon" -p seleniumnodechrome="selenium-node-chrome-jon" -p replicas="3"
+
+.\oc new-app -f templates-selenium/selenium-node-firefox.yaml -n juananmoraalonso-stage -p seleniumhub="selenium-hub-jon" -p seleniumnodefirefox="selenium-node-firefox-jon" -p replicas="2"
+
+----------------------- DELETE ------------------------
+
+.\oc delete route selenium-hub-jon -n juananmoraalonso-stage
+
+.\oc delete service selenium-hub-jon -n juananmoraalonso-stage
+
+.\oc delete deploymentconfig selenium-hub-jon -n juananmoraalonso-stage
+
+.\oc delete service selenium-node-chrome-jon -n juananmoraalonso-stage
+
+.\oc delete service selenium-node-firefox-jon -n juananmoraalonso-stage
+
+.\oc delete deploymentconfig selenium-node-chrome-jon -n juananmoraalonso-stage
+
+.\oc delete deploymentconfig selenium-node-firefox-jon -n juananmoraalonso-stage
