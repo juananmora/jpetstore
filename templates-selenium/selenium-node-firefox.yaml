@@ -43,10 +43,6 @@ objects:
           volumes:
             - /dev/shm:/dev/shm
           name: master
-          resources:
-            limits:
-              cpu: '1'
-              memory: 1000Mi
           ports:
           - containerPort: 4444
             protocol: TCP
