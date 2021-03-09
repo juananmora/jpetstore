@@ -45,7 +45,7 @@ objects:
           name: master
           resources:
             limits:
-              cpu: '0.5'
+              cpu: '1'
               memory: 1000Mi
           ports:
           - containerPort: 4444
