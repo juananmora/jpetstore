@@ -61,7 +61,7 @@ objects:
             value: ${GRID_MAX_SESSION}
           - name: GRID_UNREGISTER_IF_STILL_DOWN_AFTER
             value: ${GRID_UNREGISTER_IF_STILL_DOWN_AFTER}
-          image: selenium/hub
+          image: selenium/hub:3.9
           name: master
           ports:
           - containerPort: 4444
