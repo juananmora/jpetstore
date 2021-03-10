@@ -39,7 +39,7 @@ objects:
             value: ${NODE_MAX_SESSION}
           - name: NODE_MAX_INSTANCES
             value: ${NODE_MAX_INSTANCES}            
-          image: selenium/node-firefox:85.0
+          image: selenium/node-firefox:3.9
           volumes:
             - /dev/shm:/dev/shm
           name: master
