@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Borrar Selenium') {
+            steps {
+                
+               // git 'https://github.com/juananmora/selenium.git'
+                echo 'Hello World'
+                sh '''
+                  #!/bin/bash
+                    oc login --token=${token} --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+                    oc delete route selenium-hub-jon -n ${namespace}
+                    oc delete service selenium-hub-jon -n ${namespace}
+                    oc delete deploymentconfig selenium-hub-jon -n ${namespace}
+                    oc delete service selenium-node-chrome-jon -n ${namespace}
+                    oc delete service selenium-node-firefox-jon -n ${namespace}
+                    oc delete deploymentconfig selenium-node-chrome-jon -n ${namespace}
+                    oc delete deploymentconfig selenium-node-firefox-jon -n ${namespace}
+                 '''
+            }
+        }
+    }
+}
