@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git') {
+            steps {
+                echo 'Descarga Codigo'
+                sleep 5
+            }
+        }
+        stage('Maven') {
+            steps {
+                echo 'Compilación'
+                sleep 5
+            }
+        }
+        stage('SonarQube') {
+            steps {
+                echo 'Scaneo calidad de código'
+                sleep 5
+            }
+        }
+        stage('Nexus') {
+            steps {
+                echo 'Subida artefacto'
+                sleep 5
+            }
+        }
+        stage('Despliegue Aplicación') {
+            steps {
+                echo 'Deploy'
+                sleep 5
+            }
+        }
+        stage('Crear Infra Selenium') {
+            steps {
+                 build job: 'selenium', parameters: [
+                string(name: 'token', value: "${token}"),
+                string(name: 'namespace', value: "${namespace}"),
+                string(name: 'replicaschrome', value: "${replicaschrome}"),
+                string(name: 'replicasfirefox', value: "${replicasfirefox}")
+                ]
+                sleep 10
+            }
+        }
+         stage('Ejecutar pruebas') {
+            steps {
+                 build job: 'testng'
+            }
+        }
+        stage('Borrar Infra Selenium') {
+            steps {
+                 build job: 'delete_selenium', parameters: [
+                string(name: 'token', value: "${token}"),
+                string(name: 'namespace', value: "${namespace}")
+                ]
+            }
+        }
+        stage('Release Candidate ') {
+            steps {
+                echo 'Tagear versión como RC'
+            }
+        }
+    }
+}
