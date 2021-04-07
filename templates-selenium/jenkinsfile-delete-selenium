@@ -9,7 +9,7 @@ pipeline {
                 echo 'Hello World'
                 sh '''
                   #!/bin/bash
-                    oc login --token=${token} --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+                    oc login --token=${token} --server=https://api.sandbox.x8i5.p1.openshiftapps.com:6443
                     oc delete route selenium-hub-jon -n ${namespace}
                     oc delete service selenium-hub-jon -n ${namespace}
                     oc delete deploymentconfig selenium-hub-jon -n ${namespace}
