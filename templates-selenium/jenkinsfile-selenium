@@ -16,7 +16,7 @@ pipeline {
                 echo 'Hello World'
                 sh '''
                   #!/bin/bash
-                    oc login --token=${token} --server=https://api.sandbox-m2.ll9k.p1.openshiftapps.com:6443
+                    oc login --token=${token} --server=https://api.sandbox.x8i5.p1.openshiftapps.com:6443
                     oc new-app -f templates-selenium/selenium-hub.yaml -n ${namespace} -p seleniumhub="selenium-hub-jon"
                     oc new-app -f templates-selenium/selenium-node-chrome.yaml -n ${namespace} -p seleniumhub="selenium-hub-jon" -p seleniumnodechrome="selenium-node-chrome-jon" -p replicas="${replicaschrome}"
                     oc new-app -f templates-selenium/selenium-node-firefox.yaml -n ${namespace} -p seleniumhub="selenium-hub-jon" -p seleniumnodefirefox="selenium-node-firefox-jon" -p replicas="${replicasfirefox}"
