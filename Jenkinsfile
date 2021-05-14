@@ -41,7 +41,7 @@ node('java-docker-slave') {
                  sh "wget http://192.168.1.68:8082/repository/maven-releases/testing/cilantrum/1.0/cilantrum-1.0.jar" 
             }
             stage ('Testing Automation') {
-              sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'"
+              sh "java -jar cilantrum-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'"
             }
             stage('TestNG') {
                 step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
