@@ -7,7 +7,7 @@ node('java-docker-slave') {
          sh "mvn package" 
     }
 	stage ('Upload Artifact') {
-	   nexusPublisher nexusInstanceId: 'localNexus', nexusRepositoryId: 'releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.testjenkins', packaging: 'war', version: '$BUILD_NUMBER'-'$JOB_NAME']]]
+	   nexusPublisher nexusInstanceId: 'nexus3', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.prueba', packaging: 'war', version: '$BUILD_NUMBER']]]
 	}
 	stage('SonarQube analysis') {
 		withSonarQubeEnv('sonar') {
@@ -38,7 +38,7 @@ node('java-docker-slave') {
                  checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-testing.git']]])
             }
             stage ('Download Cilantrum Jar') {
-                 sh "wget http://192.168.1.47:8081/nexus/service/local/repositories/releases/content/cilamtrum/jpetstore/1.0/jpetstore-1.0.jar"
+                 sh "wget http://192.168.1.68:8082/repository/maven-releases/testing/cilantrum/1.0/cilantrum-1.0.jar" 
             }
             stage ('Testing Automation') {
               sh "java -jar jpetstore-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'"
