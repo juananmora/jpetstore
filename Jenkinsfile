@@ -35,7 +35,7 @@ node('java-docker-slave') {
 			 }
         stage ('CheckOut GitHub Test') {
 
-                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-testing.git']]])
+                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-test.git']]])
             }
             stage ('Download Cilantrum Jar') {
                  sh "wget http://192.168.1.68:8082/repository/maven-releases/testing/cilantrum/1.0/cilantrum-1.0.jar" 
