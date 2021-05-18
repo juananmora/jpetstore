@@ -1,72 +1,102 @@
-// Powered by Infostretch 
-
-
-
-node ('maven') {
-	
-	//env.JMETER_HOME='D:/Users/jamora/Programas/apache-jmeter-4.0/apache-jmeter-4.0'
-
-	stage ('Checkout GITLAB') {
- 	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GITLAB', url: 'https://github.com/juananmora/jpetstore.git']]]) 
+node('java-docker-slave') {
+    stage ('CheckOut GitHub') {
+        
+     	 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore.git']]]) 
 	}
-	stage ('Build Artifact') {
-	
-	  	  sh "mvn package " 
-	  
+    stage ('Build') {
+         sh "mvn package" 
+    }
+	stage ('Upload Artifact') {
+	   nexusPublisher nexusInstanceId: 'nexus3', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/jpetstore.war']], mavenCoordinate: [artifactId: 'jpetstore', groupId: 'org.jenkins-ci.prueba', packaging: 'war', version: '$BUILD_NUMBER']]]
 	}
-	stage ('Deploy Version DES') {
-
-			bat "docker exec tomcatdes rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
+	stage('SonarQube analysis') {
+		withSonarQubeEnv('sonar') {
+		  sh 'mvn sonar:sonar'
+		} // submitted SonarQube taskId is automatically attached to the pipeline context
+	}
+	stage("Quality Gate"){
+	    //timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
+    	sleep(10)
+		def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+		if (qg.status != 'OK') {
+		  error "Pipeline aborted due to quality gate failure: ${qg.status}"
 		}
-	
-	stage ('Deploy DEV') {
-	        bat "docker cp -a target\\jpetstore.war tomcatdes:/usr/local/tomcat/webapps/" 
+    }
+    docker.withTool("docker") { 
+		withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
+			stage ('Deploy DEV') {
+				 sh "docker cp ./target/jpetstore.war tomcatcompose:/usr/local/tomcat/webapps/"
+				 sh "docker restart tomcatcompose"
+			}
+			stage ('Updates BBDD'){
+				 sh "docker cp update.sql mysqlcompose:/"
+				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
+
+			 }
 			
-    }
-	stage ('Push tomcat to Registry') {
+		}
+        stage ('CheckOut GitHub Pruebas') {
 
-			bat "docker commit tomcatdes imagetomcatdes:${BUILD_NUMBER}"
-		    bat "docker login -u juananmora -p gloyjonas"
-		    bat "docker tag imagetomcatdes:${BUILD_NUMBER}  juananmora/tomcatdes:${BUILD_NUMBER}"
-		    bat "docker push juananmora/tomcatdes:${BUILD_NUMBER}"
+            checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/juananmora/jpetstore-test.git']]]) 
+        }
+        stage ('Download Cilantrum Jar') {
+            sh "wget http://192.168.1.68:8082/repository/maven-releases/testing/cilantrum/1.0/cilantrum-1.0.jar" 
+        }
+        stage ('Testing Automation DEV') {
+        sh "java -jar cilantrum-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildDEV.properties'" 
+       
+        }
+        stage('TestNG DEV') {
+            step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
+                                                                                                thresholdMode: 2,
+                                                                                                failedSkips: 100,
+                                                                                                failedFails: 90,
+                                                                                                unstableFails: 90,
+                            showFailedBuilds: true
+                        ])
+            echo "RESULT: ${currentBuild.currentResult}"
+        }
+
+        stage('Approve to QA?'){
+
+            
+            input "Deploy to QA?"
+            
+        }
+        
+        withDockerServer([credentialsId: "", uri: "unix:///var/run/docker.sock"]) { 
+			stage ('Deploy QA') {
+				 sh "docker cp ./target/jpetstore.war tomcatcomposedos:/usr/local/tomcat/webapps/"
+				 sh "docker restart tomcatcomposedos"
+			}
+			stage ('Updates BBDD'){
+				 sh "docker cp update.sql mysqlcompose:/"
+				 sh "docker exec -i mysqlcompose mysql -uroot -pbmcAdm1n jpetstore < update.sql;"
+
+			 }
 			
-	}
-    stage ('Reiniciando contenedor TomcatDes') {
-	        bat "docker restart tomcatdes" 
-	}
-
-	stage 'Deploy Version QA'
-		input 'Do you approve deployment in QA?'
-		node {
-			bat "docker exec tomcatqat rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
 		}
-	
-	stage ('Deploy QAT') {
-	        bat "docker cp -a target\\jpetstore.war tomcatqat:/usr/local/tomcat/webapps/" 
+        
+        stage ('Testing Automation QA') {
+        sh "java -jar cilantrum-1.0.jar %BUILD_NUMBER% 'Jenkins' './test/resources/buildQA.properties'" 
+       
+        }
+        stage('TestNG QA') {
+            step([$class: 'Publisher', reportFilenamePattern: '**/test-output/testng-results.xml',
+                                                                                                thresholdMode: 2,
+                                                                                                failedSkips: 100,
+                                                                                                failedFails: 90,
+                                                                                                unstableFails: 90,
+                            showFailedBuilds: true
+                        ])
+            echo "RESULT: ${currentBuild.currentResult}"
+        }
+        stage ('Enviando Notificación al equipo') {
+            slackSend channel: '#builds',
+                        color: 'good',
+                        message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
+	    }
     }
-    stage ('Reiniciando contenedor tomcatqat') {
-	        bat "docker restart tomcatqat" 
-    }
-	
-	stage 'Deploy Version PRO'
-		input 'Do you approve deployment in PRO?'
-		node {
-		    
-			bat "docker exec tomcatprd rm -rf /usr/local/tomcat/webapps/jpetstore.war" 
-		}
-	
-	stage ('Deploy PRO') {
-	        bat "docker cp -a target\\jpetstore.war tomcatprd:/usr/local/tomcat/webapps/" 
-    }
-    stage ('Reiniciando contenedor tomcatprd') {
-	        bat "docker restart tomcatprd" 
-    }
-	stage ('Enviando Notificación al equipo') {
-		slackSend channel: '#builds',
-					  color: 'good',
-					  message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
-	}
-}
-
+ }
 
 
